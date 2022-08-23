@@ -1,10 +1,10 @@
-# Web3Auth Core x Google Login Demo Application
+# Web3Auth Core x Firebase (Google) Login Demo Application
 
 ## Quick Start
 
 ```bash
-git clone https://github.com/shahbaz17/web3auth-core-google-demo.git
-cd web3auth-core-google-demo
+git clone https://github.com/shahbaz17/web3auth-core-firebase-demo.git
+cd web3auth-core-firebase-demo
 ```
 
 ## Installation
