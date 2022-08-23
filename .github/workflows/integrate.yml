@@ -1,12 +1,12 @@
 name: Continuos Integration
 
 on:
-  pull_request:
+  push:
     branches:
       - master
 
 jobs:
-  build_pull_request:
+  build_on_push:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
