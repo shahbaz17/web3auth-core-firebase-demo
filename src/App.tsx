@@ -9,9 +9,26 @@ import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 import "./App.css";
 // import RPC from "./evm.web3";
 import RPC from "./evm.ethers";
+import { initializeApp } from "firebase/app";
+import {
+  GoogleAuthProvider,
+  getAuth,
+  signInWithPopup,
+  UserCredential,
+} from "firebase/auth";
 
 const clientId =
-  "BG7vMGIhzy7whDXXJPZ-JHme9haJ3PmV1-wl9SJPGGs9Cjk5_8m682DJ-lTDmwBWJe-bEHYE_t9gw0cdboLEwR8"; // get from https://dashboard.web3auth.io
+  "BKjpD5DNAFDbX9Ty9RSBAXdQP8YDY1rldKqKCgbxxa8JZODZ8zxVRzlT74qRIHsor5aIwZ55dQVlcmrwJu37PI8"; // get from https://dashboard.web3auth.io
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyB0nd9YsPLu-tpdCrsXn8wgsWVAiYEpQ_E",
+  authDomain: "web3auth-oauth-logins.firebaseapp.com",
+  projectId: "web3auth-oauth-logins",
+  storageBucket: "web3auth-oauth-logins.appspot.com",
+  messagingSenderId: "461819774167",
+  appId: "1:461819774167:web:e74addfb6cc88f3b5b9c92",
+};
 
 function App() {
   const [web3auth, setWeb3auth] = useState<Web3AuthCore | null>(null);
@@ -22,6 +39,9 @@ function App() {
   useEffect(() => {
     const init = async () => {
       try {
+        // const app = initializeApp(firebaseConfig);
+        // const auth = getAuth(app);
+
         const web3auth = new Web3AuthCore({
           chainConfig: {
             chainNamespace: CHAIN_NAMESPACES.EIP155,
@@ -33,14 +53,13 @@ function App() {
           adapterSettings: {
             clientId,
             network: "testnet",
-            uxMode: "popup",
+            uxMode: "redirect",
             loginConfig: {
-              google: {
-                name: "Custom Google Auth Login",
-                verifier: "web3auth-core-google",
-                typeOfLogin: "google",
-                clientId:
-                  "774338308167-q463s7kpvja16l4l0kko3nb925ikds2p.apps.googleusercontent.com", //use your app client id you got from google
+              jwt: {
+                name: "Custom Firebase Auth - Google Login",
+                verifier: "web3auth-core-firebase",
+                typeOfLogin: "jwt",
+                clientId,
               },
             },
           },
@@ -60,15 +79,39 @@ function App() {
     init();
   }, []);
 
+  const signInWithGoogle = async (): Promise<UserCredential> => {
+    try {
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const googleProvider = new GoogleAuthProvider();
+      const res = await signInWithPopup(auth, googleProvider);
+      console.log(res);
+      return res;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  };
+
   const login = async () => {
     if (!web3auth) {
       uiConsole("web3auth not initialized yet");
       return;
     }
+    const loginRes = await signInWithGoogle();
+    console.log("login details", loginRes);
+    const idToken = await loginRes.user.getIdToken(true);
+    console.log("idToken", idToken);
+
     const web3authProvider = await web3auth.connectTo(
       WALLET_ADAPTERS.OPENLOGIN,
       {
-        loginProvider: "google",
+        loginProvider: "jwt",
+        extraLoginOptions: {
+          id_token: idToken,
+          verifierIdField: "sub",
+          domain: "http://localhost:3000",
+        },
       }
     );
     setProvider(web3authProvider);
@@ -81,6 +124,16 @@ function App() {
     }
     const user = await web3auth.getUserInfo();
     uiConsole(user);
+  };
+
+  const authenticateUser = async () => {
+    if (!web3auth) {
+      uiConsole("web3auth not initialized yet");
+      return;
+    }
+    const idToken = await web3auth.authenticateUser();
+    // console.log(JSON.stringify(user, null, 2))
+    uiConsole(idToken);
   };
 
   const logout = async () => {
@@ -153,6 +206,11 @@ function App() {
           </button>
         </div>
         <div>
+          <button onClick={authenticateUser} className="card">
+            Get idToken
+          </button>
+        </div>
+        <div>
           <button onClick={getBalance} className="card">
             Get Balance
           </button>
@@ -192,14 +250,14 @@ function App() {
         <a target="_blank" href="http://web3auth.io/" rel="noreferrer">
           Web3Auth
         </a>{" "}
-        & ReactJS Example for Google Login
+        & Firebase React Example for Google Login
       </h1>
 
       <div className="grid">{provider ? loginView : logoutView}</div>
 
       <footer className="footer">
         <a
-          href="https://github.com/Web3Auth/examples/tree/master/google-core-react-example"
+          href="https://github.com/Web3Auth/examples/tree/master/firebase-core-react-example"
           target="_blank"
           rel="noopener noreferrer"
         >
