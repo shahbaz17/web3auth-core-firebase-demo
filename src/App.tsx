@@ -110,7 +110,9 @@ function App() {
         extraLoginOptions: {
           id_token: idToken,
           verifierIdField: "sub",
-          domain: "http://localhost:3000",
+          domain:
+            "https://web3auth-core-firebase-demo.vercel.app" ||
+            "http://localhost:3000",
         },
       }
     );
