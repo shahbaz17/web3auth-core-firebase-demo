@@ -45,7 +45,7 @@ function App() {
         const web3auth = new Web3AuthCore({
           chainConfig: {
             chainNamespace: CHAIN_NAMESPACES.EIP155,
-            chainId: "0x3",
+            chainId: "0x5",
           },
         });
 
