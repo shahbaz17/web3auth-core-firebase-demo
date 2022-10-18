@@ -246,7 +246,7 @@ function App() {
         Login
       </button>
       <button onClick={signInWithGoogle} className="card">
-        Get unused idToken
+        Get unused idToken (Check Browser Console)
       </button>
     </>
   );
