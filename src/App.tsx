@@ -85,7 +85,7 @@ function App() {
       const auth = getAuth(app);
       const googleProvider = new GoogleAuthProvider();
       const res = await signInWithPopup(auth, googleProvider);
-      console.log(res);
+      console.log(`idToken`, await res.user.getIdToken(true));
       return res;
     } catch (err) {
       console.error(err);
@@ -241,9 +241,14 @@ function App() {
   );
 
   const logoutView = (
-    <button onClick={login} className="card">
-      Login
-    </button>
+    <>
+      <button onClick={login} className="card">
+        Login
+      </button>
+      <button onClick={signInWithGoogle} className="card">
+        Get unused idToken
+      </button>
+    </>
   );
 
   return (
