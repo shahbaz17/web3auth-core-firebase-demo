@@ -52,7 +52,7 @@ function App() {
         const openloginAdapter = new OpenloginAdapter({
           adapterSettings: {
             clientId,
-            network: "testnet",
+            network: "cyan",
             uxMode: "redirect",
             loginConfig: {
               jwt: {
