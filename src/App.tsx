@@ -45,14 +45,15 @@ function App() {
         const web3auth = new Web3AuthCore({
           chainConfig: {
             chainNamespace: CHAIN_NAMESPACES.EIP155,
-            chainId: "0x5",
+            chainId: "0x1",
+            rpcTarget: "https://rpc.ankr.com/eth",
           },
         });
 
         const openloginAdapter = new OpenloginAdapter({
           adapterSettings: {
             clientId,
-            network: "cyan",
+            network: "testnet",
             uxMode: "redirect",
             loginConfig: {
               jwt: {
